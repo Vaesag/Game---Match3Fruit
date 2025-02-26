@@ -139,10 +139,12 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\grid.cpp" />
     <ClCompile Include="src\tile.cpp" />
+    <ClCompile Include="src\ui.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\grid.h" />
     <ClInclude Include="include\tile.h" />
+    <ClInclude Include="include\ui.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
