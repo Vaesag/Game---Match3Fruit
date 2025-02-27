@@ -22,7 +22,7 @@ UI::UI(sf::Texture& bgTexture, sf::Texture& StatusTexture, sf::Texture& progress
     // Жизни
     statusBar.setTexture(StatusTexture);
     statusBar.setOrigin(StatusTexture.getSize().x / 2, StatusTexture.getSize().y / 2); // Устанавливаем точку привязки в центр спрайта
-    statusBar.setPosition(window.getSize().x / 2, 20);    // Центрируем спрайт в окне
+    statusBar.setPosition(window.getSize().x / 2, 20); 
 
     // Прогресс
     progress.setTexture(progressTexture);

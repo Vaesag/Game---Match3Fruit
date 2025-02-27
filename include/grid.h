@@ -4,19 +4,26 @@
 
 class Grid {
 private:
-	static const int COLUMNS = 4; // Количество столбцов
-	static const int ROWS = 5; // Количество строк
-    std::vector<std::vector<Tile*>> grid; // Массив фишек
+	static const int COLUMNS = 4;
+	static const int ROWS = 5;
+    std::vector<std::vector<Tile*>> grid;
+    sf::Texture* textures; 
 
 
-    Tile* selectedTile1 = nullptr;  // Первая выбранная фишка
-    Tile* selectedTile2 = nullptr;  // Вторая фишка для обмена
+    Tile* selectedTile1 = nullptr;
+    Tile* selectedTile2 = nullptr;
 
 public:
-    Grid(sf::Texture textures[]); // Конструктор
+    Grid(sf::Texture textures[], sf::RenderWindow* window); // Конструктор
     void draw(sf::RenderWindow& window);
 
     void handleClick(float mouseX, float mouseY); // Обработчик кликов
     bool areAdjacent(Tile* a, Tile* b); // Проверка соседства
-    void swapTiles(Tile* a, Tile* b); // Меняем местами
+   void swapTiles(Tile* tile1, Tile* tile2); // Меняем местами
+
+   void removeMatches();  // Удаляет совпавшие фишки
+   void dropTiles();      // Опускает фишки вниз
+    void processMatchesAtStart(); // Проверяем совпадения после генерации
+    bool checkMatches(); // Проверка совпадений (3+ одинаковых фишек)
+
 };

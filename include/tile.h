@@ -4,8 +4,9 @@ using namespace sf;
 
 class Tile {
 public:
-	int type;		// Тип фрукта
+	int type;
 	Sprite sprite;
+	int x, y;
 
 	Tile(int type, sf::Texture& texture, float x, float y);
 };

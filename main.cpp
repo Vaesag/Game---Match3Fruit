@@ -26,7 +26,7 @@ int main()
 	}
 
 
-	Grid grid(textures); // Создаём игровое поле
+	Grid grid(textures, &window); // Создаём игровое поле
 	UI ui(bgTexture, statusTexture, progressTexture, levelBannerTexture, mascot1Texture, mascot2Texture, settingsTexture, keyTexture, window);
 
 	// Главный цикл приложения. Выполняется, пока открыто окно
@@ -47,8 +47,10 @@ int main()
 		}
 
 		window.clear(Color::White);
+
 		ui.draw(window);	
 		grid.draw(window);
+
 		window.display();
 	}
 
