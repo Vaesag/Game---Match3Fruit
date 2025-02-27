@@ -19,6 +19,7 @@ public:
         sf::Texture& levelBannerTexture, sf::Texture& mascot1Texture, sf::Texture& mascot2Texture, sf::Texture& settingsTexture,
         sf::Texture& keyTexture, sf::RenderWindow& window);
 
+    sf::Sprite& getSettingsButton() { return settingsBtn; }
     void draw(sf::RenderWindow& window);
 };
 

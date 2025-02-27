@@ -3,9 +3,10 @@
 #include <ctime>
 #include <iostream>
 
-Grid::Grid(sf::Texture textures[], sf::RenderWindow* window) {
+Grid::Grid(sf::Texture textures[], sf::RenderWindow* window, UI* ui) {
 
     this->textures = textures;
+    this->ui = ui;
     std::srand(static_cast<unsigned>(std::time(nullptr)));
 
     grid.resize(ROWS, std::vector<Tile*>(COLUMNS));
@@ -39,6 +40,13 @@ void Grid::draw(sf::RenderWindow& window) {
 }
 
 void Grid::handleClick(float mouseX, float mouseY) {
+
+    if (ui->getSettingsButton().getGlobalBounds().contains(mouseX, mouseY)) {
+        std::cout << "🔄 Пересоздаём поле по нажатию на кнопку настроек!\n";
+        resetGrid();
+        return;
+    }
+
     for (int i = 0; i < ROWS; ++i) {
         for (int j = 0; j < COLUMNS; ++j) {
             Tile* tile = grid[i][j];
@@ -244,4 +252,32 @@ void Grid::updateAnimation() {
         std::cout << "✅ Анимация завершена, заполняем пустые ячейки...\n";
         dropTiles();  // 🔥 Теперь заполняем пустые клетки
     }
+}
+
+void Grid::resetGrid() {
+    std::cout << "🔄 Пересоздаём игровое поле...\n";
+
+    // Удаляем старые фишки
+    for (int i = 0; i < ROWS; ++i) {
+        for (int j = 0; j < COLUMNS; ++j) {
+            if (grid[i][j] != nullptr) {
+                delete grid[i][j];
+                grid[i][j] = nullptr;
+            }
+        }
+    }
+
+    // Пересоздаём поле с новыми фишками
+    for (int i = 0; i < ROWS; ++i) {
+        for (int j = 0; j < COLUMNS; ++j) {
+            int randomType = std::rand() % 4;  // Генерируем случайный тип
+            grid[i][j] = new Tile(randomType, textures[randomType], j, i);
+        }
+    }
+
+    // Убираем все возможные анимации и состояния
+    isAnimating = false;
+    waitingForAnimation = false;
+    processMatchesAtStart();
+    std::cout << "✅ Поле пересоздано!\n";
 }

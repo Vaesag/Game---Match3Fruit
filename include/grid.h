@@ -1,5 +1,6 @@
 #pragma once
 #include "Tile.h"
+#include "ui.h"
 #include <vector>
 
 class Grid {
@@ -8,7 +9,7 @@ private:
 	static const int ROWS = 5;
     std::vector<std::vector<Tile*>> grid;
     sf::Texture* textures; 
-
+    UI* ui;
     bool isAnimating = false;
     sf::Clock animationClock;
     float animationDuration = 0.9f;
@@ -19,7 +20,7 @@ private:
     Tile* selectedTile2 = nullptr;
 
 public:
-    Grid(sf::Texture textures[], sf::RenderWindow* window); // Конструктор
+    Grid(sf::Texture textures[], sf::RenderWindow* window, UI* ui); // Конструктор
     void draw(sf::RenderWindow& window);
 
     void handleClick(float mouseX, float mouseY); // Обработчик кликов
@@ -30,7 +31,7 @@ public:
    void dropTiles();      // Опускает фишки вниз
     void processMatchesAtStart(); // Проверяем совпадения после генерации
     bool checkMatches(); // Проверка совпадений (3+ одинаковых фишек)
-
+	void resetGrid(); // Пересоздаём поле
     void updateAnimation();
     bool isAnimationRunning() { return isAnimating; }
 };

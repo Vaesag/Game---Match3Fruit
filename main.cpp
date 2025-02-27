@@ -24,8 +24,10 @@ int main()
 		textures[3] = loadTexture(PATH_KLUBNIKA_TENM);
 
 
-	Grid grid(textures, &window); // Создаём игровое поле
+	
 	UI ui(bgTexture, statusTexture, progressTexture, levelBannerTexture, mascot1Texture, mascot2Texture, settingsTexture, keyTexture, window);
+
+	Grid grid(textures, &window, &ui); // Создаём игровое поле
 
 	// Главный цикл приложения. Выполняется, пока открыто окно
 	while (window.isOpen())
