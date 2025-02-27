@@ -32,7 +32,7 @@ void Grid::processMatchesAtStart() {
 void Grid::draw(sf::RenderWindow& window) {
     for (int i = 0; i < ROWS; ++i) {
         for (int j = 0; j < COLUMNS; ++j) {
-            if (grid[i][j] != nullptr) {  // 🔥 Проверяем, есть ли фишка!
+            if (grid[i][j] != nullptr) {
                 window.draw(grid[i][j]->sprite);
             }
         }
@@ -63,7 +63,6 @@ void Grid::handleClick(float mouseX, float mouseY) {
                         swapTiles(selectedTile1, selectedTile2);
                        
                     }
-                    // Сбрасываем выделение после обмена
 
                     selectedTile1 = nullptr;
                     selectedTile2 = nullptr;
@@ -110,14 +109,12 @@ void Grid::swapTiles(Tile* tile1, Tile* tile2) {
 bool Grid::checkMatches() {
     bool foundMatch = false;
 
-    // Перед проверкой сбрасываем все выделения (чтобы не висели)
     for (int i = 0; i < ROWS; ++i) {
         for (int j = 0; j < COLUMNS; ++j) {
             grid[i][j]->sprite.setColor(sf::Color::White);
         }
     }
 
-    // Создаём массив для отметки совпадений
     std::vector<std::vector<bool>> toRemove(ROWS, std::vector<bool>(COLUMNS, false));
 
     // Горизонтальная проверка
@@ -173,7 +170,7 @@ bool Grid::checkMatches() {
 }
 
 void Grid::removeMatches() {
-    if (isAnimating) return;  // 🔥 Если уже идёт анимация, не запускаем новую
+    if (isAnimating) return;
 
     bool foundMatch = false;
 
@@ -186,20 +183,18 @@ void Grid::removeMatches() {
     }
 
     if (foundMatch) {
-        std::cout << "✅ Найдены совпадения, запускаем анимацию...\n";
         isAnimating = true;
         animationClock.restart();
     }
 }
 
 void Grid::dropTiles() {
-    std::cout << "DROP TILES\n";
     for (int j = 0; j < COLUMNS; ++j) {
         int emptyRow = ROWS - 1;  // Начинаем с нижней строки
 
         for (int i = ROWS - 1; i >= 0; --i) {
-            if (grid[i][j] != nullptr) {  // Если фишка есть
-                if (i != emptyRow) {  // Если под ней пусто, двигаем вниз
+            if (grid[i][j] != nullptr) {    // Если фишка есть
+                if (i != emptyRow) {        // Если под ней пусто, двигаем вниз
                     grid[emptyRow][j] = grid[i][j];
                     grid[emptyRow][j]->y = emptyRow;  // Обновляем координаты
                     grid[emptyRow][j]->sprite.setPosition(j * 48 + 40, emptyRow * 50 + 140);
@@ -216,7 +211,6 @@ void Grid::dropTiles() {
             grid[i][j] = new Tile(randomType, textures[randomType], j, i);
             
             grid[i][j]->sprite.setPosition(j * 48 + 40, i * 50 + 140);
-            std::cout << "NEW TILES[" << j << "][" << i << "] (Type: " << randomType << ")\n";
         }
     }
     processMatchesAtStart();
@@ -227,7 +221,7 @@ void Grid::updateAnimation() {
 
     float elapsedTime = animationClock.getElapsedTime().asSeconds();
     float progress = elapsedTime / animationDuration;
-    float scale = std::max(1.0f - progress, 0.0f);  // 🔥 Постепенное уменьшение размера
+    float scale = std::max(1.0f - progress, 0.0f);
 
     for (int i = 0; i < ROWS; ++i) {
         for (int j = 0; j < COLUMNS; ++j) {
@@ -248,14 +242,12 @@ void Grid::updateAnimation() {
             }
         }
 
-        isAnimating = false;  // Анимация завершена
-        std::cout << "✅ Анимация завершена, заполняем пустые ячейки...\n";
-        dropTiles();  // 🔥 Теперь заполняем пустые клетки
+        isAnimating = false;
+        dropTiles();
     }
 }
 
 void Grid::resetGrid() {
-    std::cout << "🔄 Пересоздаём игровое поле...\n";
 
     // Удаляем старые фишки
     for (int i = 0; i < ROWS; ++i) {
@@ -270,14 +262,12 @@ void Grid::resetGrid() {
     // Пересоздаём поле с новыми фишками
     for (int i = 0; i < ROWS; ++i) {
         for (int j = 0; j < COLUMNS; ++j) {
-            int randomType = std::rand() % 4;  // Генерируем случайный тип
+            int randomType = std::rand() % 4;
             grid[i][j] = new Tile(randomType, textures[randomType], j, i);
         }
     }
 
-    // Убираем все возможные анимации и состояния
     isAnimating = false;
     waitingForAnimation = false;
-    processMatchesAtStart();
-    std::cout << "✅ Поле пересоздано!\n";
+    processMatchesAtStart(); 
 }
