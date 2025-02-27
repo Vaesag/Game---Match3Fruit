@@ -1,8 +1,22 @@
 #include "../include/ui.h"
+#include <map>
+#include <SFML/Graphics.hpp>
+#include <iostream>
+
+sf::Texture loadTexture(const std::string& path, sf::IntRect rect, bool smooth) {
+    sf::Texture texture;
+    if (!texture.loadFromFile(path, rect)) {
+        std::cerr << "Ошибка загрузки текстуры: " << path << std::endl;
+    }
+    if (smooth) {
+        texture.setSmooth(true);
+    }
+    return texture;
+}
 
 UI::UI(sf::Texture& bgTexture, sf::Texture& StatusTexture, sf::Texture& progressTexture,
     sf::Texture& levelBannerTexture, sf::Texture& settingsTexture,
-    sf::Texture& keyTexture) {
+    sf::Texture& keyTexture, sf::RenderWindow& window) {
 
     // Фон
     background.setTexture(bgTexture);
@@ -11,6 +25,7 @@ UI::UI(sf::Texture& bgTexture, sf::Texture& StatusTexture, sf::Texture& progress
     // Жизни
     statusBar.setTexture(StatusTexture);
     statusBar.setPosition(30, 10);
+
 
     // Прогресс
     progress.setTexture(progressTexture);
@@ -23,11 +38,13 @@ UI::UI(sf::Texture& bgTexture, sf::Texture& StatusTexture, sf::Texture& progress
 
     // Кнопка настроек
     settingsBtn.setTexture(settingsTexture);
-    settingsBtn.setPosition(50, 550);
+    settingsBtn.setPosition(10, 423.5);
+    settingsBtn.scale(0.5, 0.5);
 
     // Кнопка ключа
     keyBtn.setTexture(keyTexture);
-    keyBtn.setPosition(500, 550);
+    keyBtn.setPosition(225, 423.5);
+    keyBtn.scale(0.5, 0.5);
 }
 
 void UI::draw(sf::RenderWindow& window) {

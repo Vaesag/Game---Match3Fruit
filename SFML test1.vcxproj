@@ -142,6 +142,7 @@
     <ClCompile Include="src\ui.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\const.h" />
     <ClInclude Include="include\grid.h" />
     <ClInclude Include="include\tile.h" />
     <ClInclude Include="include\ui.h" />
