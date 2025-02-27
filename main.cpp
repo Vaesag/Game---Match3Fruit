@@ -1,4 +1,3 @@
-#include <SFML/Graphics.hpp>
 #include "include/ui.h"
 #include "include/const.h"
 
@@ -12,10 +11,12 @@ int main()
 		statusTexture = loadTexture(PATH_STATUS),
 		progressTexture = loadTexture(PATH_PROGRESS),
 		levelBannerTexture = loadTexture(PATH_LEVEL_BANNER),
+		mascot1Texture = loadTexture(PATH_MASCOT1),
+		mascot2Texture = loadTexture(PATH_MASCOT2),
 		settingsTexture = loadTexture(PATH_SETTINGS_BTN),
 		keyTexture = loadTexture(PATH_KEY_BTN);
 
-	UI ui(bgTexture, statusTexture, progressTexture, levelBannerTexture, settingsTexture, keyTexture);
+	UI ui(bgTexture, statusTexture, progressTexture, levelBannerTexture, mascot1Texture, mascot2Texture, settingsTexture, keyTexture, window);
 
 	// Главный цикл приложения. Выполняется, пока открыто окно
 	while (window.isOpen())

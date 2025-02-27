@@ -1,7 +1,4 @@
 #include "../include/ui.h"
-#include <map>
-#include <SFML/Graphics.hpp>
-#include <iostream>
 
 sf::Texture loadTexture(const std::string& path, sf::IntRect rect, bool smooth) {
     sf::Texture texture;
@@ -15,7 +12,7 @@ sf::Texture loadTexture(const std::string& path, sf::IntRect rect, bool smooth) 
 }
 
 UI::UI(sf::Texture& bgTexture, sf::Texture& StatusTexture, sf::Texture& progressTexture,
-    sf::Texture& levelBannerTexture, sf::Texture& settingsTexture,
+    sf::Texture& levelBannerTexture, sf::Texture& mascot1Texture, sf::Texture& mascot2Texture, sf::Texture& settingsTexture,
     sf::Texture& keyTexture, sf::RenderWindow& window) {
 
     // Фон
@@ -24,17 +21,30 @@ UI::UI(sf::Texture& bgTexture, sf::Texture& StatusTexture, sf::Texture& progress
 
     // Жизни
     statusBar.setTexture(StatusTexture);
-    statusBar.setPosition(30, 10);
-
+    statusBar.setOrigin(StatusTexture.getSize().x / 2, StatusTexture.getSize().y / 2); // Устанавливаем точку привязки в центр спрайта
+    statusBar.setPosition(window.getSize().x / 2, 20);    // Центрируем спрайт в окне
 
     // Прогресс
     progress.setTexture(progressTexture);
-    progress.setPosition(47, 41);
+    progress.setOrigin(progressTexture.getSize().x / 2, progressTexture.getSize().y / 2);
+    progress.setPosition(window.getSize().x / 2, 60);
 
     // Баннер "Level"
     levelBanner.setTexture(levelBannerTexture);
-    levelBanner.setPosition(74.6, 90);
     levelBanner.scale(0.8, 0.8);
+	levelBanner.setOrigin(levelBannerTexture.getSize().x / 2, levelBannerTexture.getSize().y / 2);
+	levelBanner.setPosition(window.getSize().x / 2, 110);
+
+	// Маскоты
+	mascot1.setTexture(mascot1Texture);
+    mascot1.scale(0.7, 0.7);
+	mascot1.setOrigin(mascot1Texture.getSize().x / 2, mascot1Texture.getSize().y / 2);
+	mascot1.setPosition(window.getSize().x / 2 - 60, 120);
+
+	mascot2.setTexture(mascot2Texture);
+	mascot2.scale(0.7, 0.7);
+	mascot2.setOrigin(mascot2Texture.getSize().x / 2, mascot2Texture.getSize().y / 2);
+	mascot2.setPosition(window.getSize().x / 2 + 80, 120);
 
     // Кнопка настроек
     settingsBtn.setTexture(settingsTexture);
@@ -52,6 +62,8 @@ void UI::draw(sf::RenderWindow& window) {
     window.draw(statusBar);
     window.draw(progress);
     window.draw(levelBanner);
+	window.draw(mascot1);
+	window.draw(mascot2);
     window.draw(settingsBtn);
     window.draw(keyBtn);
 }
