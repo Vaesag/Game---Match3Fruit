@@ -4,24 +4,36 @@
 #include <iostream>
 
 Grid::Grid(sf::Texture textures[], sf::RenderWindow* window) {
+
     this->textures = textures;
-    std::srand(static_cast<unsigned>(std::time(nullptr))); // Рандомизация
+    std::srand(static_cast<unsigned>(std::time(nullptr)));
 
     grid.resize(ROWS, std::vector<Tile*>(COLUMNS));
-
     for (int i = 0; i < ROWS; ++i) {
         for (int j = 0; j < COLUMNS; ++j) {
-            int randomType = std::rand() % 4; // 3 вида фишек
+            int randomType = std::rand() % 4;
             grid[i][j] = new Tile(randomType, textures[randomType], j, i);
         }
     }
-    processMatchesAtStart(); // Проверяем совпадения после генерации
+    processMatchesAtStart();
 }
+
+void Grid::processMatchesAtStart() {
+	if (isAnimating) return;
+
+    bool foundMatch = checkMatches();
+    if (!foundMatch) return;
+    waitingForAnimation = true;
+    removeMatches();
+}
+
 
 void Grid::draw(sf::RenderWindow& window) {
     for (int i = 0; i < ROWS; ++i) {
         for (int j = 0; j < COLUMNS; ++j) {
-            window.draw(grid[i][j]->sprite);
+            if (grid[i][j] != nullptr) {  // 🔥 Проверяем, есть ли фишка!
+                window.draw(grid[i][j]->sprite);
+            }
         }
     }
 }
@@ -34,21 +46,17 @@ void Grid::handleClick(float mouseX, float mouseY) {
             if (tile->sprite.getGlobalBounds().contains(mouseX, mouseY)) {
                 if (selectedTile1 == nullptr) {
                     selectedTile1 = tile;
-                    selectedTile1->sprite.setColor(sf::Color(200, 200, 200)); // Затемняем фишку
+                    selectedTile1->sprite.setColor(sf::Color(200, 200, 200));
                 }
                 else if (selectedTile2 == nullptr && tile != selectedTile1) {
                     selectedTile2 = tile;
-                    selectedTile2->sprite.setColor(sf::Color(200, 200, 200)); // Затемняем вторую фишку
-                    // Проверяем, можно ли менять местами
+                    selectedTile2->sprite.setColor(sf::Color(200, 200, 200)); 
                     if (areAdjacent(selectedTile1, selectedTile2)) {
-                    
                         swapTiles(selectedTile1, selectedTile2);
                        
                     }
-
                     // Сбрасываем выделение после обмена
-                    selectedTile1->sprite.setColor(sf::Color::White);
-                    selectedTile2->sprite.setColor(sf::Color::White);
+
                     selectedTile1 = nullptr;
                     selectedTile2 = nullptr;
                 }
@@ -64,7 +72,32 @@ bool Grid::areAdjacent(Tile* a, Tile* b) {
     return (dx == 1 && dy == 0) || (dx == 0 && dy == 1);
 }
 
+void Grid::swapTiles(Tile* tile1, Tile* tile2) {
+    // Меняем местами в `grid`
+    std::swap(grid[tile1->y][tile1->x], grid[tile2->y][tile2->x]);
 
+    // Меняем координаты `x, y` в самих фишках!
+    std::swap(tile1->x, tile2->x);
+    std::swap(tile1->y, tile2->y);
+
+    // Обновляем позиции спрайтов
+    tile1->sprite.setPosition(tile1->x * 48 + 40, tile1->y * 50 + 140);
+    tile2->sprite.setPosition(tile2->x * 48 + 40, tile2->y * 50 + 140);
+    
+    if (checkMatches()) {
+        removeMatches();  // Если есть совпадения, удаляем фишки
+    }
+    else {
+        // Если совпадений нет, возвращаем фишки обратно
+        std::swap(grid[tile1->y][tile1->x], grid[tile2->y][tile2->x]);
+        std::swap(tile1->x, tile2->x);
+        std::swap(tile1->y, tile2->y);
+
+        tile1->sprite.setPosition(tile1->x * 48 + 40, tile1->y * 50 + 140);
+        tile2->sprite.setPosition(tile2->x * 48 + 40, tile2->y * 50 + 140);
+    }
+
+}
 
 bool Grid::checkMatches() {
     bool foundMatch = false;
@@ -79,7 +112,7 @@ bool Grid::checkMatches() {
     // Создаём массив для отметки совпадений
     std::vector<std::vector<bool>> toRemove(ROWS, std::vector<bool>(COLUMNS, false));
 
-    // 2️⃣ Горизонтальная проверка
+    // Горизонтальная проверка
     for (int i = 0; i < ROWS; ++i) {
         int count = 1;
         for (int j = 1; j < COLUMNS; ++j) {
@@ -132,21 +165,24 @@ bool Grid::checkMatches() {
 }
 
 void Grid::removeMatches() {
+    if (isAnimating) return;  // 🔥 Если уже идёт анимация, не запускаем новую
+
+    bool foundMatch = false;
+
     for (int i = 0; i < ROWS; ++i) {
         for (int j = 0; j < COLUMNS; ++j) {
-            if (grid[i][j] == nullptr) continue; // Пропускаем пустые ячейки
-
-            if (grid[i][j]->sprite.getColor() == sf::Color::Red) { // Если фишка выделена как совпавшая
-                
-                delete grid[i][j];  // Удаляем объект
-                grid[i][j] = nullptr;  // Обнуляем ячейку
+            if (grid[i][j] != nullptr && grid[i][j]->sprite.getColor() == sf::Color::Red) {
+                foundMatch = true;
             }
         }
     }
 
-    dropTiles();  // Опускаем оставшиеся фишки вниз
+    if (foundMatch) {
+        std::cout << "✅ Найдены совпадения, запускаем анимацию...\n";
+        isAnimating = true;
+        animationClock.restart();
+    }
 }
-
 
 void Grid::dropTiles() {
     std::cout << "DROP TILES\n";
@@ -176,43 +212,36 @@ void Grid::dropTiles() {
         }
     }
     processMatchesAtStart();
-
 }
 
-void Grid::swapTiles(Tile * tile1, Tile * tile2) {
-        // Меняем местами в `grid`
-        std::swap(grid[tile1->y][tile1->x], grid[tile2->y][tile2->x]);
+void Grid::updateAnimation() {
+    if (!isAnimating) return;  // Если анимация не идёт — выходим
 
-        // Меняем координаты `x, y` в самих фишках!
-        std::swap(tile1->x, tile2->x);
-        std::swap(tile1->y, tile2->y);
+    float elapsedTime = animationClock.getElapsedTime().asSeconds();
+    float progress = elapsedTime / animationDuration;
+    float scale = std::max(1.0f - progress, 0.0f);  // 🔥 Постепенное уменьшение размера
 
-        // Обновляем позиции спрайтов
-        tile1->sprite.setPosition(tile1->x * 48 + 40, tile1->y * 50 + 140);
-        tile2->sprite.setPosition(tile2->x * 48 + 40, tile2->y * 50 + 140);
-
-        if (checkMatches()) {
-            removeMatches();  // Если есть совпадения, удаляем фишки
+    for (int i = 0; i < ROWS; ++i) {
+        for (int j = 0; j < COLUMNS; ++j) {
+            if (grid[i][j] != nullptr && grid[i][j]->sprite.getColor() == sf::Color::Red) {
+                grid[i][j]->sprite.setScale(scale, scale);
+            }
         }
-        else {
-            // Если совпадений нет, возвращаем фишки обратно
-            std::swap(grid[tile1->y][tile1->x], grid[tile2->y][tile2->x]);
-            std::swap(tile1->x, tile2->x);
-            std::swap(tile1->y, tile2->y);
+    }
 
-            tile1->sprite.setPosition(tile1->x * 48 + 40, tile1->y * 50 + 140);
-            tile2->sprite.setPosition(tile2->x * 48 + 40, tile2->y * 50 + 140);
+    // Если анимация завершена, удаляем фишки
+    if (elapsedTime >= animationDuration) {
+        for (int i = 0; i < ROWS; ++i) {
+            for (int j = 0; j < COLUMNS; ++j) {
+                if (grid[i][j] != nullptr && grid[i][j]->sprite.getColor() == sf::Color::Red) {
+                    delete grid[i][j];
+                    grid[i][j] = nullptr;
+                }
+            }
         }
+
+        isAnimating = false;  // Анимация завершена
+        std::cout << "✅ Анимация завершена, заполняем пустые ячейки...\n";
+        dropTiles();  // 🔥 Теперь заполняем пустые клетки
+    }
 }
-
-void Grid::processMatchesAtStart() {
-    bool foundMatch;
-
-    do {
-        foundMatch = checkMatches(); // Проверяем, есть ли совпадения
-        if (foundMatch) {
-            removeMatches(); // Если есть, удаляем фишки и заполняем пустые места
-        }
-    } while (foundMatch); // Повторяем, пока на поле остаются совпадения
-}
-

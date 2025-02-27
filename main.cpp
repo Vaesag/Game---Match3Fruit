@@ -18,12 +18,10 @@ int main()
 		keyTexture = loadTexture(PATH_KEY_BTN);
 
 	sf::Texture textures[4]; // Массив текстур фишек
-	if (!textures[0].loadFromFile("resources/avokado.png") ||
-		!textures[1].loadFromFile("resources/klubnika-svet.png") ||
-		!textures[2].loadFromFile("resources/limon.png") || 
-		!textures[3].loadFromFile("resources/klubnika-tenm.png")) {
-		return -1;
-	}
+		textures[0] = loadTexture(PATH_AVOKADO);
+		textures[1] = loadTexture(PATH_KLUBNIKA_SVET);
+		textures[2] = loadTexture(PATH_LIMON);
+		textures[3] = loadTexture(PATH_KLUBNIKA_TENM);
 
 
 	Grid grid(textures, &window); // Создаём игровое поле
@@ -45,11 +43,16 @@ int main()
 				}
 			}
 		}
+	
 
 		window.clear(Color::White);
 
-		ui.draw(window);	
+		ui.draw(window);
+		
+		grid.updateAnimation();
+		
 		grid.draw(window);
+		
 
 		window.display();
 	}

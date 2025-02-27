@@ -9,6 +9,11 @@ private:
     std::vector<std::vector<Tile*>> grid;
     sf::Texture* textures; 
 
+    bool isAnimating = false;
+    sf::Clock animationClock;
+    float animationDuration = 0.9f;
+
+        bool waitingForAnimation = false;
 
     Tile* selectedTile1 = nullptr;
     Tile* selectedTile2 = nullptr;
@@ -26,4 +31,6 @@ public:
     void processMatchesAtStart(); // ѕровер€ем совпадени€ после генерации
     bool checkMatches(); // ѕроверка совпадений (3+ одинаковых фишек)
 
+    void updateAnimation();
+    bool isAnimationRunning() { return isAnimating; }
 };
