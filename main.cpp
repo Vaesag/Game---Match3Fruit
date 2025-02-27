@@ -38,6 +38,12 @@ int main()
 		{
 			if (event.type == Event::Closed)
 				window.close();
+
+			if (event.type == Event::MouseButtonPressed) {
+				if (event.mouseButton.button == Mouse::Left) {
+					grid.handleClick(event.mouseButton.x, event.mouseButton.y);
+				}
+			}
 		}
 
 		window.clear(Color::White);
