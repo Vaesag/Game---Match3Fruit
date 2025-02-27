@@ -1,11 +1,12 @@
 #include "include/ui.h"
 #include "include/const.h"
+#include "include/Grid.h"
 
 using namespace sf;
 
 int main()
 {
-	RenderWindow window(VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML Works!", Style::Close);
+	RenderWindow window(VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Match3FRUIT!", Style::Close);
 
 	Texture bgTexture = loadTexture(PATH_BACKGROUND, sf::IntRect(31, 0, 262, 459)),
 		statusTexture = loadTexture(PATH_STATUS),
@@ -16,6 +17,16 @@ int main()
 		settingsTexture = loadTexture(PATH_SETTINGS_BTN),
 		keyTexture = loadTexture(PATH_KEY_BTN);
 
+	sf::Texture textures[4]; // Массив текстур фишек
+	if (!textures[0].loadFromFile("resources/avokado.png") ||
+		!textures[1].loadFromFile("resources/klubnika-svet.png") ||
+		!textures[2].loadFromFile("resources/limon.png") || 
+		!textures[3].loadFromFile("resources/klubnika-tenm.png")) {
+		return -1;
+	}
+
+
+	Grid grid(textures); // Создаём игровое поле
 	UI ui(bgTexture, statusTexture, progressTexture, levelBannerTexture, mascot1Texture, mascot2Texture, settingsTexture, keyTexture, window);
 
 	// Главный цикл приложения. Выполняется, пока открыто окно
@@ -31,6 +42,7 @@ int main()
 
 		window.clear(Color::White);
 		ui.draw(window);	
+		grid.draw(window);
 		window.display();
 	}
 

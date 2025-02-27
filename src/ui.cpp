@@ -44,7 +44,7 @@ UI::UI(sf::Texture& bgTexture, sf::Texture& StatusTexture, sf::Texture& progress
 	mascot2.setTexture(mascot2Texture);
 	mascot2.scale(0.7, 0.7);
 	mascot2.setOrigin(mascot2Texture.getSize().x / 2, mascot2Texture.getSize().y / 2);
-	mascot2.setPosition(window.getSize().x / 2 + 80, 120);
+	mascot2.setPosition(window.getSize().x / 2 + 80, 130);
 
     // Кнопка настроек
     settingsBtn.setTexture(settingsTexture);
