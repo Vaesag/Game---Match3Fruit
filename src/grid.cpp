@@ -42,7 +42,6 @@ void Grid::draw(sf::RenderWindow& window) {
 void Grid::handleClick(float mouseX, float mouseY) {
 
     if (ui->getSettingsButton().getGlobalBounds().contains(mouseX, mouseY)) {
-        std::cout << "🔄 Пересоздаём поле по нажатию на кнопку настроек!\n";
         resetGrid();
         return;
     }
